@@ -1,10 +1,12 @@
 import streamlit as st
 
+# Eine Überschrift der ersten Ebene
+st.write("# EKG APP")
 
-def main():
-    st.title("a, Streamlit!")
-    st.write("This is a simple Streamlit app.")
-    st.write("You can add more components and functionality here.")
+# Eine Überschrift der zweiten Ebene
+st.write("## Versuchsperson auswählen")
 
-if __name__ == "__main__":
-    main()
+# Eine Auswahlbox
+current_user = st.selectbox(
+    'Versuchsperson',
+    options = ["Nutzer1", "Nutzer2"], key="sbVersuchsperson")
