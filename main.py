@@ -19,4 +19,3 @@ current_user = st.selectbox(
 # Ein Button
 if st.button("Daten anzeigen", key="btnDatenAnzeigen"):
     st.write("Daten von " + current_user)
-    #
