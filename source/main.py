@@ -17,6 +17,7 @@ if st.button("Daten anzeigen", key="btnDatenAnzeigen"):
     if current_user in all_persons:
         st.session_state.current_user_data = all_persons[current_user]
         st.session_state.picture_path = get_person_picture(current_user)
+        print(get_person_picture(current_user)) # Debug-Ausgabe
 
 # Anzeige (bleibt bestehen, solange etwas im State ist)
 if st.session_state.current_user_data:
