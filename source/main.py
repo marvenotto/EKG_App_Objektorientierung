@@ -2,7 +2,7 @@ import streamlit as st
 #import pandas as pd
 #import numpy as np
 
-from source.read_data import get_person_list, get_person_age
+from read_data import get_person_list, get_person_age
 
 
 # Eine Überschrift der ersten Ebene
