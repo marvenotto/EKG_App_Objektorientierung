@@ -1,7 +1,7 @@
 # EKG_App_Steamlit
 
 
-To start the Prjekt type in Terminal:
+To start the Prjekt type in Terminal, it could be that VSC is pretty slow so chill after you did:
 
 pdm run streamlit run main.py
 
