@@ -1,5 +1,5 @@
 import streamlit as st
-from read_data import get_person_list, get_person_dict, get_person_picture
+from source.read_data import get_person_list, get_person_dict, get_person_picture
 
 st.write("# EKG APP")
 st.write("## Versuchsperson auswählen")
