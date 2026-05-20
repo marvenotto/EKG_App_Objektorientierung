@@ -75,6 +75,7 @@ fig_Watt.update_yaxes(title_text="Leistung (W)", secondary_y=False)
 fig_Herz.update_yaxes(title_text="Puls (bpm)", secondary_y=True)
 fig_both.update_xaxes(title_text="Zeit (Minuten)")
 fig_both.update_yaxes(title_text="Leistung (W)", secondary_y=False)
+fig_both.update_yaxes(title_text="Puls (bpm)", secondary_y=True)
 
 
 st.plotly_chart(fig_both, use_container_width=True)
