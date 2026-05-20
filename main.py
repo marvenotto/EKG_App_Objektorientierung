@@ -77,7 +77,7 @@ with tab2:
     df["Zone"] = pd.cut(df["HeartRate"], bins=bins, labels=labels)
 
     # 5. Zonen-Auswertung inklusive Prozent-Berechnung
-    # len(df) gibt uns die Gesamtzahl aller gültigen Sekunden im Training
+    # len(df) gibt die Gesamtzahl aller gültigen Sekunden im Training
     gesamt_sekunden = len(df)
 
     zonen = df.groupby("Zone", observed=False).agg(
@@ -97,6 +97,7 @@ with tab2:
     st.subheader("Interaktiver Verlauf")
     #fig = make_subplots(specs=[[{"secondary_y": True}]])
 
+    # Erstellen von drei separaten Figuren für Leistung, Herzfrequenz und beide zusammen
     fig_Watt = make_subplots()
     fig_Herz = make_subplots(specs=[[{"secondary_y": True}]])
     fig_both = make_subplots(specs=[[{"secondary_y": True}]])
@@ -122,7 +123,7 @@ with tab2:
     )
 
 
-
+    # Achsenbeschriftungen
     fig_Watt.update_xaxes(title_text="Zeit (Minuten)")
     fig_Herz.update_xaxes(title_text="Zeit (Minuten)")
     fig_Watt.update_yaxes(title_text="Leistung (W)", secondary_y=False)
@@ -131,7 +132,7 @@ with tab2:
     fig_both.update_yaxes(title_text="Leistung (W)", secondary_y=False)
     fig_both.update_yaxes(title_text="Puls (bpm)", secondary_y=True)
 
-
+    #Plotly-Chart anzeigen in Streamlit
     st.plotly_chart(fig_both, use_container_width=True)
     st.plotly_chart(fig_Herz, use_container_width=True)
     st.plotly_chart(fig_Watt, use_container_width=True)
