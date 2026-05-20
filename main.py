@@ -86,6 +86,8 @@ with tab2:
         Avg_Leistung=("PowerOriginal", "mean")
     ).reset_index()
 
+
+
     # Filter auf die Kernzonen
     zonen = zonen[zonen["Zone"].isin(["Zone 1", "Zone 2", "Zone 3", "Zone 4", "Zone 5"])]
 
