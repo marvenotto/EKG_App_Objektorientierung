@@ -1,15 +1,10 @@
+import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+
 from plotly.subplots import make_subplots
-import streamlit as st
-
-
-
-import streamlit as st
 from source.read_data import get_person_list, get_person_dict, get_person_picture
-
-from source.read_pandas import read_my_csv
-from source.read_pandas import make_plot
+from source.read_pandas import read_my_csv, make_plot
 
 st.write("# EKG APP")
 st.write("## Versuchsperson auswählen")
