@@ -64,18 +64,26 @@ with tab2:
     df = df.dropna(subset=["PowerOriginal"])       # Drop missing power data rows
     df["Echte_Sekunden"] = range(len(df))          # Generate a continuous time sequence in seconds
 
-    # 2. User input for performance metrics calculation
-    max_hr = st.number_input("Maximale Herzfrequenz:", value=190)
+    # 2. Calculate maximum heart rate directly from data (no user input)
+    max_hr = df["HeartRate"].max()
 
     # 3. Summary Statistics
-    st.write(f"Durchschnittliche Leistung: {df['PowerOriginal'].mean():.1f} W")
+    st.write(f"Maximaler Puls: {df['HeartRate'].max()} bpm")
     st.write(f"Maximale Leistung: {df['PowerOriginal'].max():.1f} W")
+    st.write(f"Durchschnittliche Leistung: {df['PowerOriginal'].mean():.1f} W")
 
     # 4. Heart Rate Zone Binning
-    # Define thresholds and labels based on the user's custom maximum heart rate
-    bins = [0, 0.5 * max_hr, 0.6 * max_hr, 0.7 * max_hr, 0.8 * max_hr, 0.9 * max_hr, max_hr, 300]
-    labels = ["Unter Z1", "Zone 1", "Zone 2", "Zone 3", "Zone 4", "Zone 5", "Über Z5"]
-    df["Zone"] = pd.cut(df["HeartRate"], bins=bins, labels=labels)
+    # Define thresholds (in BPM) based on the user's custom maximum heart rate
+    # Zones:
+    #  - Zone 1: 50-60% HFmax
+    #  - Zone 2: 60-70% HFmax
+    #  - Zone 3: 70-80% HFmax
+    #  - Zone 4: 80-90% HFmax
+    #  - Zone 5: 90-100% HFmax
+    
+    bins = [0.5 * max_hr, 0.6 * max_hr, 0.7 * max_hr, 0.8 * max_hr, 0.9 * max_hr, max_hr + 1]
+    labels = ["🟢 Zone 1", "🔵 Zone 2", "🟡 Zone 3", "🟠 Zone 4", "🔴 Zone 5"]
+    df["Zone"] = pd.cut(df["HeartRate"], bins=bins, labels=labels, right=False)
 
     # 5. Zone Analysis & Percentage Computation
     # Total duration of valid training data in seconds
@@ -88,8 +96,8 @@ with tab2:
         Avg_Leistung=("PowerOriginal", "mean")
     ).reset_index()
 
-    # Filter out edge cases to focus on standard training zones (1 to 5)
-    zonen = zonen[zonen["Zone"].isin(["Zone 1", "Zone 2", "Zone 3", "Zone 4", "Zone 5"])]
+    # Remove rows with NaN zones (if any)
+    zonen = zonen.dropna(subset=["Zone"])
 
     st.subheader("Zonen Auswertung")
     # Render the structured summary dataframe
@@ -136,6 +144,6 @@ with tab2:
     fig_both.update_yaxes(title_text="Puls (bpm)", secondary_y=True)
 
     # Render dynamic Plotly plots inside Streamlit layout blocks
-    st.plotly_chart(fig_both, use_container_width=True)
-    st.plotly_chart(fig_Herz, use_container_width=True)
-    st.plotly_chart(fig_Watt, use_container_width=True)
+    st.plotly_chart(fig_both, width='stretch')
+    st.plotly_chart(fig_Herz, width='stretch')
+    st.plotly_chart(fig_Watt, width='stretch')

@@ -12,8 +12,6 @@ Eine interaktive **Streamlit-Anwendung** zur Analyse und Visualisierung von Fitn
 - 🎯 **Dynamische Belastungszonen** – 5 Herzfrequenzzonen basierend auf maximaler Herzfrequenz
 - 📊 **Interaktive Visualisierung** – Plotly-Diagramme zum Erforschen der Daten
 - 🖼️ **Personenfotos** – Anzeige von Profilbildern
-- 📱 **Responsive Design** – Optimiert für verschiedene Bildschirmgrößen
-
 ---
 
 ## 🚀 Schnellstart
@@ -105,63 +103,108 @@ EKG_App_Steamlit/
 
 Die App teilt die Herzfrequenz automatisch in **5 Trainings- und Belastungszonen** ein. Diese Zonen basieren auf der **maximalen Herzfrequenz (HFmax)** der ausgewählten Person.
 
-| Zone | Name | Herzfrequenz | Trainingseffekt | Beschreibung |
-|------|------|-------------|-----------------|--------------|
-| **1** | 🟢 Erholung | 50–60% HFmax | Regeneration & Ausdauer | Niedriger Puls, leichte Aktivität, ideal zum Warmlaufen oder Erholen |
-| **2** | 🔵 Aerob | 60–70% HFmax | Fettverbrennung & Grundlagen | Komfortables Training, länger durchzuhalten, Basis-Ausdauertraining |
-| **3** | 🟡 Anaerobe Schwelle | 70–80% HFmax | Ausdauer-Verbesserung | Anstrengendes Training, höhere Intensität, Grenzbereich |
-| **4** | 🟠 VO₂-Max | 80–90% HFmax | Maximale Fitness | Intensives Training, Verbesserung der Leistung, kurzzeitig |
-| **5** | 🔴 Sprintzone | 90–100% HFmax | Maximale Leistung | Maximale Intensität, nur kurz möglich, Sprinttraining |
+### 🟢 Zone 1: SEHR LEICHT (50–60% HFmax)
+
+**Wie fühlt es sich an?**
+Es fühlt sich sehr leicht an. Du könntest stundenlang weitermachen.
+
+**Trainingseffekt:**
+- Förderung von Erholung und Gesundheit
+- Vorbereitung für intensivere Trainingseinheiten
+- Ideal zum Warmlaufen und Erholen
+
+---
+
+### 🔵 Zone 2: LEICHT (60–70% HFmax)
+
+**Wie fühlt es sich an?**
+Es fühlt sich immer noch angenehm und einfach an. Du könntest stundenlang weitermachen.
+
+**Trainingseffekt:**
+- Verbesserung der allgemeinen Ausdauer
+- Optimierung des Fettstoffwechsels und der muskulären Fitness
+- Erhöhung der Kapillardichte
+- Wesentlicher Bestandteil jedes Trainingsprogramms
+
+---
+
+### 🟡 Zone 3: MODERAT (70–80% HFmax)
+
+**Wie fühlt es sich an?**
+Du fängst an tiefer zu atmen und fühlst eine mäßige Anstrengung.
+
+**Trainingseffekt:**
+- Besonders effektiv zur Verbesserung der Blutzirkulation
+- Verbesserung der aeroben Fitness
+- Laktat beginnt sich anzureichern, wird aber noch als Energie verwertet
+- Erhöhung der Trainings-Effizienz
+
+---
+
+### 🟠 Zone 4: HART (80–90% HFmax)
+
+**Wie fühlt es sich an?**
+Deine Muskeln fühlen sich müde an und du atmest schwer.
+
+**Trainingseffekt:**
+- Verbesserung der Geschwindigkeitsausdauer
+- Bessere Nutzung von Kohlenhydraten als Energiequelle
+- Verbesserte Laktattoleranz im Blut
+- Intensive Belastung für kürzere Zeiträume
+
+---
+
+### 🔴 Zone 5: SEHR HART (90–100% HFmax)
+
+**Wie fühlt es sich an?**
+Es fühlt sich für Muskeln und Atmung erschöpfend an.
+
+**Trainingseffekt:**
+- Maximale Anstrengung und maximale Kapazität des Cardiovaskulären-Systems
+- Hohe Laktat-Ansammlung im Blut
+- Nur für kurze Zeiträume möglich (einige Minuten)
+- Ideal für Sprinttraining und maximale Leistungssteigerung
+
+---
+
+### 📊 Zusammenfassung der Zonen
+
+| Zone | Intensität | Gefühl | Beste Nutzung |
+|------|-----------|--------|---------------|
+| **1** | Sehr Leicht | Sehr entspannt | Regeneration & Warmlaufen |
+| **2** | Leicht | Angenehm | Ausdauertraining |
+| **3** | Moderat | Mäßig anstrengend | Aerobe Fitness |
+| **4** | Hart | Anstrengend | Geschwindigkeitsausdauer |
+| **5** | Sehr Hart | Erschöpfend | Sprinttraining (kurz) |
 
 ### 📍 Wo finde ich die Zonen in der App?
 
 - Gehe zum Reiter **"Power-Data"**
 - Das Diagramm zeigt die **zeitliche Verteilung** der Herzfrequenz auf alle 5 Zonen
-- Farbcodierung (wie oben) macht die Intensität auf einen Blick sichtbar
-- **Statistiken** zeigen, wie viel Zeit in jeder Zone verbracht wurde
+- Farbcodierung (🟢→🔴) macht die Intensität auf einen Blick sichtbar
+- **Tabelle "Zonen Auswertung"** zeigt, wie viel Zeit und durchschnittliche Leistung pro Zone
 
 ### 💡 Beispiel-Interpretation
 
-Wenn du eine **Ruhe-Messung** öffnest:
-- 🟢 Hauptsächlich in Zone 1–2 (normale Ruheherzfrequenz)
+**Ruhe-Messung:**
+- 🟢🔵 Hauptsächlich in Zone 1–2 (50–70% HFmax, normale Ruheherzfrequenz)
 
-Bei einer **Belastungs-Messung**:
-- 🟡🟠🔴 Verteilung über mehrere Zonen, mit Spitzen in Zone 4–5 (intensives Training)
-
----
-
-## 🔧 Konfiguration & Entwicklung
-
-### Neue Abhängigkeiten hinzufügen
-```bash
-pdm add <paket-name>
-```
-
-### Abhängigkeiten aktualisieren
-```bash
-pdm update
-```
-
-### Entwicklungsmodus
-```bash
-pdm run streamlit run main.py --logger.level=debug
-```
-
----
-
-## 📄 Lizenz
-
-Dieses Projekt steht unter der **MIT-Lizenz**. Siehe [LICENSE](LICENSE) für weitere Informationen.
+**Belastungs-Messung:**
+- 🟡🟠🔴 Verteilung über mehrere Zonen, mit deutlichen Spitzen in Zone 3–5 (intensives Training, höhere Belastung)
 
 ---
 
 ## 👨‍💻 Autor
 
-**Cedric Rissi**  
-📧 [cedric.rissi2003@gmail.com](mailto:cedric.rissi2003@gmail.com)
-
+**Cedric Rissi**
+**Marven Otto**  
 ---
 
 ## 🐛 Feedback & Support
 
 Hast du Fragen oder Probleme? Erstelle gerne ein Issue im Repository oder kontaktiere den Autor direkt.
+
+## Screenshots from Webinterface:
+![alt text](data/screeenshot_4_readme/image.png)
+![alt text](data/screeenshot_4_readme/image-1.png)
+![alt text](data/screeenshot_4_readme/image-2.png)
