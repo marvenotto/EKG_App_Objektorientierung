@@ -28,5 +28,11 @@
         "vorname": "Simon",
         "nachname": "Ulmer",
         "alter": 25
+    },
+    {
+        "id": 6,
+        "vorname": "Samuel",
+        "nachname": "Manser",
+        "alter": 21
     }
 ]
