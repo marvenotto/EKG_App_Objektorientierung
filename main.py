@@ -32,118 +32,118 @@ if st.button("Daten anzeigen", key="btnDatenAnzeigen"):
         st.session_state.current_user_data = all_persons[current_user]
         st.session_state.picture_path = get_person_picture(current_user)
 
-# Display selected subject's profile information
-if st.session_state.current_user_data:
-    user = st.session_state.current_user_data
+    # Display selected subject's profile information
+    if st.session_state.current_user_data:
+        user = st.session_state.current_user_data
 
-    st.write(f"### Daten von {current_user}")
-    st.write(f"**Alter:** {user['alter']}")
-    st.image(st.session_state.picture_path, width=200)
+        st.write(f"### Daten von {current_user}")
+        st.write(f"**Alter:** {user['alter']}")
+        st.image(st.session_state.picture_path, width=200)
 
-# Set up organized views using layout tabs
-tab1, tab2 = st.tabs(["EKG-Data", "Power-Data"])
+    # Set up organized views using layout tabs
+    tab1, tab2 = st.tabs(["EKG-Data", "Power-Data"])
 
-# --- TAB 1: EKG Data Visualization ---
-with tab1:
-    st.header("EKG-Data")
-    
-    # Load and plot raw EKG data
-    df = read_my_csv()
-    fig = make_plot(df)
-    st.plotly_chart(fig)
+    # --- TAB 1: EKG Data Visualization ---
+    with tab1:
+        st.header("EKG-Data")
+        
+        # Load and plot raw EKG data
+        df = read_my_csv()
+        fig = make_plot(df)
+        st.plotly_chart(fig)
 
-# --- TAB 2: Activity and Power Analysis ---
-with tab2:
-    st.header("Power-Data")
+    # --- TAB 2: Activity and Power Analysis ---
+    with tab2:
+        st.header("Power-Data")
 
-    # Task 3: Comprehensive Activity Analysis
-    st.title("Aktivitätsanalyse")
+        # Task 3: Comprehensive Activity Analysis
+        st.title("Aktivitätsanalyse")
 
-    # 1. Data Ingestion & Cleaning
-    df = pd.read_csv("data/activities/activity.csv")
-    df = df.dropna(subset=["PowerOriginal"])       # Drop missing power data rows
-    df["Echte_Sekunden"] = range(len(df))          # Generate a continuous time sequence in seconds
+        # 1. Data Ingestion & Cleaning
+        df = pd.read_csv("data/activities/activity.csv")
+        df = df.dropna(subset=["PowerOriginal"])       # Drop missing power data rows
+        df["Echte_Sekunden"] = range(len(df))          # Generate a continuous time sequence in seconds
 
-    # 2. Calculate maximum heart rate directly from data (no user input)
-    max_hr = df["HeartRate"].max()
+        # 2. Calculate maximum heart rate directly from data (no user input)
+        max_hr = df["HeartRate"].max()
 
-    # 3. Summary Statistics
-    st.write(f"Maximaler Puls: {df['HeartRate'].max()} bpm")
-    st.write(f"Maximale Leistung: {df['PowerOriginal'].max():.1f} W")
-    st.write(f"Durchschnittliche Leistung: {df['PowerOriginal'].mean():.1f} W")
+        # 3. Summary Statistics
+        st.write(f"Maximaler Puls: {df['HeartRate'].max()} bpm")
+        st.write(f"Maximale Leistung: {df['PowerOriginal'].max():.1f} W")
+        st.write(f"Durchschnittliche Leistung: {df['PowerOriginal'].mean():.1f} W")
 
-    # 4. Heart Rate Zone Binning
-    # Define thresholds (in BPM) based on the user's custom maximum heart rate
-    # Zones:
-    #  - Zone 1: 50-60% HFmax
-    #  - Zone 2: 60-70% HFmax
-    #  - Zone 3: 70-80% HFmax
-    #  - Zone 4: 80-90% HFmax
-    #  - Zone 5: 90-100% HFmax
-    
-    bins = [0.5 * max_hr, 0.6 * max_hr, 0.7 * max_hr, 0.8 * max_hr, 0.9 * max_hr, max_hr + 1]
-    labels = ["🟢 Zone 1", "🔵 Zone 2", "🟡 Zone 3", "🟠 Zone 4", "🔴 Zone 5"]
-    df["Zone"] = pd.cut(df["HeartRate"], bins=bins, labels=labels, right=False)
+        # 4. Heart Rate Zone Binning
+        # Define thresholds (in BPM) based on the user's custom maximum heart rate
+        # Zones:
+        #  - Zone 1: 50-60% HFmax
+        #  - Zone 2: 60-70% HFmax
+        #  - Zone 3: 70-80% HFmax
+        #  - Zone 4: 80-90% HFmax
+        #  - Zone 5: 90-100% HFmax
+        
+        bins = [0.5 * max_hr, 0.6 * max_hr, 0.7 * max_hr, 0.8 * max_hr, 0.9 * max_hr, max_hr + 1]
+        labels = ["🟢 Zone 1", "🔵 Zone 2", "🟡 Zone 3", "🟠 Zone 4", "🔴 Zone 5"]
+        df["Zone"] = pd.cut(df["HeartRate"], bins=bins, labels=labels, right=False)
 
-    # 5. Zone Analysis & Percentage Computation
-    # Total duration of valid training data in seconds
-    gesamt_sekunden = len(df)
+        # 5. Zone Analysis & Percentage Computation
+        # Total duration of valid training data in seconds
+        gesamt_sekunden = len(df)
 
-    # Aggregate performance metrics grouped by training zones
-    zonen = df.groupby("Zone", observed=False).agg(
-        Minuten=("PowerOriginal", lambda x: round(len(x) / 60, 2)),
-        Prozent=("PowerOriginal", lambda x: round((len(x) / gesamt_sekunden) * 100, 1)),
-        Avg_Leistung=("PowerOriginal", "mean")
-    ).reset_index()
+        # Aggregate performance metrics grouped by training zones
+        zonen = df.groupby("Zone", observed=False).agg(
+            Minuten=("PowerOriginal", lambda x: round(len(x) / 60, 2)),
+            Prozent=("PowerOriginal", lambda x: round((len(x) / gesamt_sekunden) * 100, 1)),
+            Avg_Leistung=("PowerOriginal", "mean")
+        ).reset_index()
 
-    # Remove rows with NaN zones (if any)
-    zonen = zonen.dropna(subset=["Zone"])
+        # Remove rows with NaN zones (if any)
+        zonen = zonen.dropna(subset=["Zone"])
 
-    st.subheader("Zonen Auswertung")
-    # Render the structured summary dataframe
-    st.dataframe(zonen[["Zone", "Prozent", "Minuten", "Avg_Leistung"]])
+        st.subheader("Zonen Auswertung")
+        # Render the structured summary dataframe
+        st.dataframe(zonen[["Zone", "Prozent", "Minuten", "Avg_Leistung"]])
 
-    # 6. Interactive Visualizations & Charts
-    st.subheader("Interaktiver Verlauf")
+        # 6. Interactive Visualizations & Charts
+        st.subheader("Interaktiver Verlauf")
 
-    # Instantiate separate figure objects for isolated and overlay analytics
-    fig_Watt = make_subplots()
-    fig_Herz = make_subplots(specs=[[{"secondary_y": True}]])
-    fig_both = make_subplots(specs=[[{"secondary_y": True}]])
+        # Instantiate separate figure objects for isolated and overlay analytics
+        fig_Watt = make_subplots()
+        fig_Herz = make_subplots(specs=[[{"secondary_y": True}]])
+        fig_both = make_subplots(specs=[[{"secondary_y": True}]])
 
-    # Trace 1: Power output timeline (Minutes vs. Watts)
-    fig_Watt.add_trace(
-        go.Scatter(x=df["Echte_Sekunden"] / 60, y=df["PowerOriginal"], name="Leistung (W)", line_color="white"),
-        secondary_y=False,
-    )
-    
-    # Trace 2: Heart rate timeline (Minutes vs. BPM)
-    fig_Herz.add_trace(
-        go.Scatter(x=df["Echte_Sekunden"] / 60, y=df["HeartRate"], name="Puls (bpm)", line_color="red"),
-        secondary_y=True,
-    )
+        # Trace 1: Power output timeline (Minutes vs. Watts)
+        fig_Watt.add_trace(
+            go.Scatter(x=df["Echte_Sekunden"] / 60, y=df["PowerOriginal"], name="Leistung (W)", line_color="white"),
+            secondary_y=False,
+        )
+        
+        # Trace 2: Heart rate timeline (Minutes vs. BPM)
+        fig_Herz.add_trace(
+            go.Scatter(x=df["Echte_Sekunden"] / 60, y=df["HeartRate"], name="Puls (bpm)", line_color="red"),
+            secondary_y=True,
+        )
 
-    # Combined View: Superimpose Power and Heart Rate for easy overview comparison
-    fig_both.add_trace(
-        go.Scatter(x=df["Echte_Sekunden"] / 60, y=df["PowerOriginal"], name="Leistung (W)", line_color="white"),
-        secondary_y=False,
-    )
-    fig_both.add_trace(
-        go.Scatter(x=df["Echte_Sekunden"] / 60, y=df["HeartRate"], name="Puls (bpm)", line_color="red"),
-        secondary_y=True,
-    )
+        # Combined View: Superimpose Power and Heart Rate for easy overview comparison
+        fig_both.add_trace(
+            go.Scatter(x=df["Echte_Sekunden"] / 60, y=df["PowerOriginal"], name="Leistung (W)", line_color="white"),
+            secondary_y=False,
+        )
+        fig_both.add_trace(
+            go.Scatter(x=df["Echte_Sekunden"] / 60, y=df["HeartRate"], name="Puls (bpm)", line_color="red"),
+            secondary_y=True,
+        )
 
-    # Update global axes titles and properties for clarity
-    fig_Watt.update_xaxes(title_text="Zeit (Minuten)")
-    fig_Herz.update_xaxes(title_text="Zeit (Minuten)")
-    fig_Watt.update_yaxes(title_text="Leistung (W)", secondary_y=False)
-    fig_Herz.update_yaxes(title_text="Puls (bpm)", secondary_y=True)
-    
-    fig_both.update_xaxes(title_text="Zeit (Minuten)")
-    fig_both.update_yaxes(title_text="Leistung (W)", secondary_y=False)
-    fig_both.update_yaxes(title_text="Puls (bpm)", secondary_y=True)
+        # Update global axes titles and properties for clarity
+        fig_Watt.update_xaxes(title_text="Zeit (Minuten)")
+        fig_Herz.update_xaxes(title_text="Zeit (Minuten)")
+        fig_Watt.update_yaxes(title_text="Leistung (W)", secondary_y=False)
+        fig_Herz.update_yaxes(title_text="Puls (bpm)", secondary_y=True)
+        
+        fig_both.update_xaxes(title_text="Zeit (Minuten)")
+        fig_both.update_yaxes(title_text="Leistung (W)", secondary_y=False)
+        fig_both.update_yaxes(title_text="Puls (bpm)", secondary_y=True)
 
-    # Render dynamic Plotly plots inside Streamlit layout blocks
-    st.plotly_chart(fig_both, width='stretch')
-    st.plotly_chart(fig_Herz, width='stretch')
-    st.plotly_chart(fig_Watt, width='stretch')
+        # Render dynamic Plotly plots inside Streamlit layout blocks
+        st.plotly_chart(fig_both, width='stretch')
+        st.plotly_chart(fig_Herz, width='stretch')
+        st.plotly_chart(fig_Watt, width='stretch')
