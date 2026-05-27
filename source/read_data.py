@@ -193,21 +193,41 @@ def add_person(vorname, nachname, alter):
         alter (int): Age of the person.
         
     Returns:
-        dict: The newly created person record, or None if addition failed.
+        dict: {
+            "success": bool,
+            "person": dict or None,
+            "error_type": str or None ("duplicate", "invalid_input", "file_error", "unknown"),
+            "message": str
+        }
     """
     try:
         # Validate inputs
         if not isinstance(vorname, str) or not vorname.strip():
             logger.error("Invalid vorname: must be a non-empty string")
-            return None
+            return {
+                "success": False,
+                "person": None,
+                "error_type": "invalid_input",
+                "message": "Vorname ungültig oder leer"
+            }
         
         if not isinstance(nachname, str) or not nachname.strip():
             logger.error("Invalid nachname: must be a non-empty string")
-            return None
+            return {
+                "success": False,
+                "person": None,
+                "error_type": "invalid_input",
+                "message": "Nachname ungültig oder leer"
+            }
         
         if not isinstance(alter, int) or alter < 0 or alter > 150:
             logger.error("Invalid alter: must be an integer between 0 and 150")
-            return None
+            return {
+                "success": False,
+                "person": None,
+                "error_type": "invalid_input",
+                "message": "Alter muss zwischen 10 und 100 liegen"
+            }
         
         # Load current data
         data = load_person_data()
@@ -229,7 +249,12 @@ def add_person(vorname, nachname, alter):
             if (person['vorname'].lower() == new_person['vorname'].lower() and 
                 person['nachname'].lower() == new_person['nachname'].lower()):
                 logger.warning(f"Person {vorname} {nachname} already exists in database")
-                return None
+                return {
+                    "success": False,
+                    "person": None,
+                    "error_type": "duplicate",
+                    "message": f"⚠️ {vorname} {nachname} existiert bereits in der Datenbank!"
+                }
         
         # Add new person to list
         data.append(new_person)
@@ -239,12 +264,27 @@ def add_person(vorname, nachname, alter):
             with open(DATA_PATH, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
             logger.info(f"Successfully added new person: {vorname} {nachname} (ID: {new_id})")
-            return new_person
+            return {
+                "success": True,
+                "person": new_person,
+                "error_type": None,
+                "message": f"✅ {vorname} {nachname} wurde hinzugefügt!"
+            }
         
         except (IOError, OSError) as e:
             logger.error(f"Error writing to JSON file {DATA_PATH}: {e}")
-            return None
+            return {
+                "success": False,
+                "person": None,
+                "error_type": "file_error",
+                "message": "Fehler beim Speichern der Datei"
+            }
             
     except Exception as e:
         logger.error(f"Unexpected error adding person: {e}")
-        return None
+        return {
+            "success": False,
+            "person": None,
+            "error_type": "unknown",
+            "message": "Unerwarteter Fehler"
+        }

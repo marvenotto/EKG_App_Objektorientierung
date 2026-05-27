@@ -4,12 +4,29 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 # Custom modules for reading data and plotting
-from source.read_data import get_person_list, get_person_dict, get_person_picture
+from source.read_data import get_person_list, get_person_dict, get_person_picture, add_person
 from source.read_pandas import read_my_csv, make_plot
+
+
+def submit_new_person():
+    result = add_person(
+        st.session_state.input_vorname,
+        st.session_state.input_nachname,
+        st.session_state.input_alter,
+    )
+    st.session_state.add_person_result = result
+
+    if result["success"]:
+        st.session_state.input_vorname = ""
+        st.session_state.input_nachname = ""
+        st.session_state.input_alter = 25
+
 
 # App title and initial user selection UI
 st.write("# EKG APP")
 st.write("## Versuchsperson auswählen")
+
+
 
 # Initialize session state variables to persist user data across reruns
 if 'current_user_data' not in st.session_state:
@@ -22,6 +39,45 @@ current_user = st.selectbox(
     options=person_list,
     key="sbVersuchsperson"
 )
+
+# --- NEUE VERSUCHSPERSON HINZUFÜGEN ---
+with st.expander("➕ Neue Versuchsperson hinzufügen"):
+    st.write("### Neue Person eintragen")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        new_vorname = st.text_input("Vorname", placeholder="z.B. Max", key="input_vorname")
+    
+    with col2:
+        new_nachname = st.text_input("Nachname", placeholder="z.B. Mustermann", key="input_nachname")
+    
+    with col3:
+        new_alter = st.number_input("Alter", min_value=10, max_value=100, value=25, key="input_alter")
+    
+    col_btn, col_info = st.columns([1, 3])
+    
+    with col_btn:
+        st.button(
+            "Person hinzufügen",
+            key="btnAddPerson",
+            on_click=submit_new_person,
+        )
+
+    with col_info:
+        st.info("💡 Nach dem Hinzufügen findest du die neue Person in der Auswahl-Liste unten!")
+
+    if "add_person_result" in st.session_state:
+        result = st.session_state.add_person_result
+        if result["success"]:
+            st.success(result["message"])
+            st.write("✅ Die neue Person wurde erstellt und steht jetzt oben in der Auswahl zur Verfügung.")
+        elif result["error_type"] == "duplicate":
+            st.warning(result["message"])
+        else:
+            st.error(result["message"])
+
+st.divider()  # Visuelle Trennung
 
 # Handle data fetching when the action button is clicked
 if st.button("Daten anzeigen", key="btnDatenAnzeigen"):
