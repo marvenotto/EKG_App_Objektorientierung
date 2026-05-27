@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import pandas as pd
 
 # Configure logging
 logging.basicConfig(level=logging.WARNING, format='%(levelname)s: %(message)s')
@@ -16,6 +17,17 @@ PROJECT_ROOT = os.path.join(BASE_DIR, "..")
 DATA_PATH = os.path.join(PROJECT_ROOT, "data", "person_db.json")
 PICTURE_DIR = os.path.join(PROJECT_ROOT, "data", "pictures")
 
+def read_my_csv():
+    # Einlesen eines Dataframes
+    ## "\t" steht für das Trennzeichen in der txt-Datei (Tabulator anstelle von Beistrich)
+    ## header = None: es gibt keine Überschriften in der txt-Datei
+    df = pd.read_csv("data/ekg_data/01_Ruhe.txt", sep="\t", header=None)
+
+    # Setzt die Columnnames im Dataframe
+    df.columns = ["Messwerte in mV","Zeit in ms"]
+    
+    # Gibt den geladen Dataframe zurück
+    return df
 
 def load_person_data():
     """

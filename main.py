@@ -4,8 +4,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 # Custom modules for reading data and plotting
-from source.read_data import get_person_list, get_person_dict, get_person_picture, add_person
-from source.read_pandas import read_my_csv, make_plot
+from source.read_write_data import read_my_csv, get_person_list, get_person_dict, get_person_picture, add_person
+# from source.read_pandas import make_plot
 
 
 def submit_new_person():
@@ -79,7 +79,7 @@ with st.expander("➕ Neue Versuchsperson hinzufügen"):
 
 st.divider()  # Visuelle Trennung
 
-# Handle data fetching when the action button is clicked
+# --- Handle data fetching when the action button is clicked --- 
 if st.button("Daten anzeigen", key="btnDatenAnzeigen"):
     all_persons = get_person_dict()
 
@@ -100,13 +100,44 @@ if st.button("Daten anzeigen", key="btnDatenAnzeigen"):
     tab1, tab2 = st.tabs(["EKG-Data", "Power-Data"])
 
     # --- TAB 1: EKG Data Visualization ---
+    # --- TAB 1: EKG Data Visualization ---
     with tab1:
         st.header("EKG-Data")
         
         # Load and plot raw EKG data
         df = read_my_csv()
-        fig = make_plot(df)
-        st.plotly_chart(fig)
+
+        # Generate an EKG line plot using Plotly Subplots
+        fig = make_subplots(rows=1, cols=1)
+        fig.add_trace(
+            go.Scatter(
+                x=df["Zeit in ms"],
+                y=df["Messwerte in mV"],
+                mode="lines",
+                name="EKG",
+                line=dict(color="blue"),
+            ),
+            row=1,
+            col=1,
+        )
+        
+        # Startwert ermitteln
+        start_time = df["Zeit in ms"].min()
+        end_time = start_time + 2500  
+        
+        fig.update_layout(
+            title="EKG-Verlauf",
+            xaxis_title="Zeit in ms",
+            yaxis_title="Messwerte in mV",
+            template="plotly_white",
+            margin=dict(l=40, r=20, t=50, b=40),
+            xaxis=dict(
+                range=[start_time, end_time],
+                tickformat="d"  # <-- Erzwingt die Ganzzahl-Darstellung (kein 'k' mehr!)
+            )
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
     # --- TAB 2: Activity and Power Analysis ---
     with tab2:
