@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 # Custom modules for reading data and plotting
-from source.read_write_data import read_my_csv, get_person_list, get_person_dict, get_person_picture, add_person
+from source.read_write_data import read_my_txt, get_person_list, get_person_dict, get_person_picture, add_person
 # from source.read_pandas import make_plot
 
 
@@ -32,6 +32,15 @@ st.write("## Versuchsperson auswählen")
 if 'current_user_data' not in st.session_state:
     st.session_state.current_user_data = None
 
+# Initialize form defaults in session state to avoid widget warning when a widget
+# is created with a default value and its key is also set in `st.session_state`.
+if 'input_vorname' not in st.session_state:
+    st.session_state.input_vorname = ""
+if 'input_nachname' not in st.session_state:
+    st.session_state.input_nachname = ""
+if 'input_alter' not in st.session_state:
+    st.session_state.input_alter = 25
+
 # Fetch the list of available subjects and display the selection dropdown
 person_list = get_person_list()
 current_user = st.selectbox(
@@ -53,7 +62,7 @@ with st.expander("➕ Neue Versuchsperson hinzufügen"):
         new_nachname = st.text_input("Nachname", placeholder="z.B. Mustermann", key="input_nachname")
     
     with col3:
-        new_alter = st.number_input("Alter", min_value=10, max_value=100, value=25, key="input_alter")
+        new_alter = st.number_input("Alter", min_value=10, max_value=100, key="input_alter")
     
     col_btn, col_info = st.columns([1, 3])
     
@@ -105,7 +114,7 @@ if st.button("Daten anzeigen", key="btnDatenAnzeigen"):
         st.header("EKG-Data")
         
         # Load and plot raw EKG data
-        df = read_my_csv()
+        df = read_my_txt("data/ekg_data/01_Ruhe.txt")
 
         # Generate an EKG line plot using Plotly Subplots
         fig = make_subplots(rows=1, cols=1)
@@ -133,11 +142,11 @@ if st.button("Daten anzeigen", key="btnDatenAnzeigen"):
             margin=dict(l=40, r=20, t=50, b=40),
             xaxis=dict(
                 range=[start_time, end_time],
-                tickformat="d"  # <-- Erzwingt die Ganzzahl-Darstellung (kein 'k' mehr!)
+                tickformat="d"  # <-- Erzwingt die Ganzzahl-Darstellung der x-Achse
             )
         )
 
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     # --- TAB 2: Activity and Power Analysis ---
     with tab2:

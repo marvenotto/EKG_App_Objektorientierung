@@ -17,11 +17,11 @@ PROJECT_ROOT = os.path.join(BASE_DIR, "..")
 DATA_PATH = os.path.join(PROJECT_ROOT, "data", "person_db.json")
 PICTURE_DIR = os.path.join(PROJECT_ROOT, "data", "pictures")
 
-def read_my_csv():
+def read_my_txt(file_path):
     # Einlesen eines Dataframes
     ## "\t" steht für das Trennzeichen in der txt-Datei (Tabulator anstelle von Beistrich)
     ## header = None: es gibt keine Überschriften in der txt-Datei
-    df = pd.read_csv("data/ekg_data/01_Ruhe.txt", sep="\t", header=None)
+    df = pd.read_csv(file_path, sep="\t", header=None)
 
     # Setzt die Columnnames im Dataframe
     df.columns = ["Messwerte in mV","Zeit in ms"]
