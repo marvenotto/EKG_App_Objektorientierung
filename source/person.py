@@ -1,66 +1,74 @@
 import json
+import datetime
 from PIL import Image
-
-def get_person_data():
-    """
-    Returns the person data loaded from the JSON file.
-    """
-    with open("data/person_db.json", "r", encoding="utf-8") as file:
-        person_data = json.load(file)
-
-    person_object_list = []
-    for person_dict in person_data:
-        person_object = Person( person_dict["id"],
-                                person_dict["date_of_birth"],
-                                person_dict["firstname"],
-                                person_dict["lastname"],
-                                person_dict["picture_path"],
-                                person_dict["ekg_tests"],
-                                person_dict["gender"]
-                                )
-        person_object_list.append(person_object)
-    return person_object_list
-
-
-def get_person_object_by_full_name(full_name):
-    persons = get_person_data()
-    firstname = full_name.split(", ")[1]
-    lastname = full_name.split(", ")[0]
-
-    for person in persons:
-        if person.firstname==firstname and person.lastname==lastname:
-            return person
+import os
 
 class Person:
+    def __init__(self, person_dict):
+        self.id = person_dict.get("id")
+        self.firstname = person_dict.get("vorname", "Unbekannt")
+        self.lastname = person_dict.get("nachname", "Unbekannt")
+        self.age = person_dict.get("alter", 25)
+        
+        current_year = datetime.datetime.now().year
+        self.date_of_birth = current_year - self.age
+        
+        self.gender = "Male"  
+        self.picture_path = f"data/pictures/{self.lastname.lower()}.jpg"
+        
+        # HIER IST DIE MAGIE: Wir weisen den IDs dynamisch eure 5 Dateien zu
+        file_map = {
+            1: "data/ekg_data/01_Ruhe.txt",
+            2: "data/ekg_data/02_Ruhe.txt",
+            3: "data/ekg_data/03_Ruhe.txt",
+            4: "data/ekg_data/04_Belastung.txt",
+            5: "data/ekg_data/05_Belastung.txt"
+        }
+        # Falls jemand z.B. ID 6 hat, bekommt er als Ersatz einfach Datei 1
+        test_file = file_map.get(self.id, "data/ekg_data/01_Ruhe.txt")
+        
+        self.ekg_tests = [
+            {
+                "id": self.id,
+                "date": "15.06.2026",
+                "result_link": test_file
+            }
+        ]
 
-    def __init__(self, id : int, date_of_birth : int, firstname, lastname, picture_path, ekg_tests, gender = "Male"):
-        self.id = id
-        self.date_of_birth = date_of_birth
-        self.firstname = firstname
-        self.lastname = lastname
-        self.picture_path = picture_path
-        self.ekg_tests = ekg_tests
-        self.hr_max = 220 - (2025-int(date_of_birth))
-        self.gender = gender
+    @staticmethod
+    def load_person_data():
+        try:
+            with open("data/person_db.json", "r", encoding="utf-8") as file:
+                person_data = json.load(file)
+            return person_data
+        except FileNotFoundError:
+            return []
 
+    @classmethod
+    def load_by_id(cls, person_id):
+        data = cls.load_person_data()
+        for p in data:
+            if p.get("id") == person_id:
+                return cls(p)
+        return None
 
-    def set_hr(self, hr):
-        self.hr_max = hr
+    def calc_age(self):
+        return self.age
+
+    def calc_max_heart_rate(self):
+        age = self.calc_age()
+        if self.gender.lower() == "male":
+            return int(223 - (0.9 * age))
+        else:
+            return int(226 - (1.0 * age))
 
     def get_full_name(self):
-        return self.lastname + ", " + self.firstname
-
+        return f"{self.lastname}, {self.firstname}"
 
     def get_image(self):
-        image = Image.open(self.picture_path)
-        return image
-    
-
-
-
-if __name__ == "__main__":
-    print("This is a module with some functions to read the person data")
-    persons = Person.load_person_data()
-    person_names = Person.get_person_list(persons)
-    print(person_names)
-    print(Person.find_person_data_by_name("Huber, Julian"))
+        if os.path.exists(self.picture_path):
+            try:
+                return Image.open(self.picture_path)
+            except:
+                return None
+        return None
