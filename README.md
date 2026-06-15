@@ -16,7 +16,12 @@ Dieses Projekt nutzt PDM zur Verwaltung der Abhaengigkeiten und der virtuellen U
    pdm run streamlit run main.py
    ```
 
-Nach der Eingabe des Startbefehls oeffnet sich das Dashboard automatisch im Webbrowser 
+Nach der Eingabe des Startbefehls oeffnet sich das Dashboard automatisch im Webbrowser (standardmaessig unter http://localhost:8501).
+
+## Autoren
+
+* **Cedric Rissi**
+* **Marven Otto**
 
 ## Screenshot der App
 
