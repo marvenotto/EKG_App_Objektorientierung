@@ -9,6 +9,15 @@ Dieses Projekt nutzt PDM zur Verwaltung der Abhaengigkeiten und der virtuellen U
 1. Virtuelle Umgebung einrichten und benoetigte Pakete installieren:
    ```bash
    pdm install
+   ```
 
-## Die Streamlit-App starten:
+2. Die Streamlit-App starten:
+   ```bash
    pdm run streamlit run main.py
+   ```
+
+Nach der Eingabe des Startbefehls oeffnet sich das Dashboard automatisch im Webbrowser (standardmaessig unter http://localhost:8501).
+
+## Screenshot der App
+
+![Screenshot der EKG App](screenshot.png)
